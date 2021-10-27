@@ -218,34 +218,47 @@ class exchangeGoodsThread(threading.Thread):
         need_break = False
         try:
             WebDriverWait(self.driver, timeout).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, 'form [type="submit"]'))
+                EC.element_to_be_clickable((By.CSS_SELECTOR, '#dialogify_3 form [type="submit"]'))
             )
-            self.driver.find_element_by_css_selector('form [type="submit"]').click()
+            self.driver.find_element_by_css_selector('#dialogify_3 form [type="submit"]').click()
         except Exception as e:
             try:
-                # TODO:自動答題(新商品)
-                WebDriverWait(self.driver, 3).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, '#question-1'))
+                WebDriverWait(self.driver, timeout).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, '#dialogify_2 form [type="submit"]'))
                 )
-                print(f'{self.index}：第一次觀看需答題')
-                self.error_queue.put([self.url, '第一次觀看需答題'])
-                need_break = True
+                self.driver.find_element_by_css_selector('#dialogify_2 form [type="submit"]').click()
             except Exception as e:
                 try:
-                    WebDriverWait(self.driver, 3).until(
-                        EC.text_to_be_present_in_element(
-                            (By.CSS_SELECTOR, '.dialogify__body'),
-                            "廣告能量補充中"
-                        )
+                    WebDriverWait(self.driver, timeout).until(
+                        EC.element_to_be_clickable((By.CSS_SELECTOR, '#dialogify form [type="submit"]'))
                     )
-                    print(f'{self.index}：廣告能量補充中')
-                    self.error_queue.put([self.url, '廣告能量補充中'])
-                    need_break = True
+                    self.driver.find_element_by_css_selector('#dialogify form [type="submit"]').click()
                 except Exception as e:
-                    print(f'{self.index}：找不到"觀看廣告>確認"按鈕')
-                    self.error_queue.put([self.url, '找不到"觀看廣告>確認"按鈕'])
-                    time.sleep(180)
-                    need_break = True
+            
+                    try:
+                        # TODO:自動答題(新商品)
+                        WebDriverWait(self.driver, 3).until(
+                            EC.presence_of_element_located((By.CSS_SELECTOR, '#question-1'))
+                        )
+                        print(f'{self.index}：第一次觀看需答題')
+                        self.error_queue.put([self.url, '第一次觀看需答題'])
+                        need_break = True
+                    except Exception as e:
+                        try:
+                            WebDriverWait(self.driver, 3).until(
+                                EC.text_to_be_present_in_element(
+                                    (By.CSS_SELECTOR, '.dialogify__body'),
+                                    "廣告能量補充中"
+                                )
+                            )
+                            print(f'{self.index}：廣告能量補充中')
+                            self.error_queue.put([self.url, '廣告能量補充中'])
+                            need_break = True
+                        except Exception as e:
+                            print(f'{self.index}：找不到"觀看廣告>確認"按鈕')
+                            self.error_queue.put([self.url, '找不到"觀看廣告>確認"按鈕'])
+                            time.sleep(180)
+                            need_break = True
         return need_break
 
     def switch_to_ad_iframe(self, timeout=10):
@@ -290,27 +303,24 @@ class exchangeGoodsThread(threading.Thread):
                 ).click()
         except Exception:
             # 判斷是否已經自動跳到抽獎
+            if 'buyD' in self.driver.current_url:
+                return need_break
             try:
+                # 出現"發生錯誤，請重新嘗試(1)"視窗
                 WebDriverWait(self.driver, 3).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, '.agree-confirm-box'))
-                )
-            except Exception:
-                try:
-                    # 出現"發生錯誤，請重新嘗試(1)"視窗
-                    WebDriverWait(self.driver, 3).until(
-                        EC.text_to_be_present_in_element(
-                            (By.CSS_SELECTOR, '.dialogify__body'), "發生錯誤"
-                        )
+                    EC.text_to_be_present_in_element(
+                        (By.CSS_SELECTOR, '.dialogify__body'), "發生錯誤"
                     )
-                    print(f'{self.index}：發生錯誤，請重新嘗試')
-                    self.error_queue.put([self.url, '發生錯誤，請重新嘗試'])
-                    # driver.quit()
-                    need_break = True
-                except Exception as e:
-                    print(f'{self.index}：廣告播放失敗 或 找不到關閉影片按鈕')
-                    self.error_queue.put([self.url, '廣告播放失敗 或 找不到關閉影片按鈕'])
-                    time.sleep(180)
-                    need_break = True
+                )
+                print(f'{self.index}：發生錯誤，請重新嘗試')
+                self.error_queue.put([self.url, '發生錯誤，請重新嘗試'])
+                # driver.quit()
+                need_break = True
+            except Exception as e:
+                print(f'{self.index}：廣告播放失敗 或 找不到關閉影片按鈕')
+                self.error_queue.put([self.url, '廣告播放失敗 或 找不到關閉影片按鈕'])
+                time.sleep(180)
+                need_break = True
         return need_break
 
     def send_lottery_info(self, timeout=10):
