@@ -257,7 +257,7 @@ class exchangeGoodsThread(threading.Thread):
                         except Exception as e:
                             print(f'{self.index}：找不到"觀看廣告>確認"按鈕')
                             self.error_queue.put([self.url, '找不到"觀看廣告>確認"按鈕'])
-                            time.sleep(180)
+                            time.sleep(10)
                             need_break = True
         return need_break
 
@@ -319,7 +319,7 @@ class exchangeGoodsThread(threading.Thread):
             except Exception as e:
                 print(f'{self.index}：廣告播放失敗 或 找不到關閉影片按鈕')
                 self.error_queue.put([self.url, '廣告播放失敗 或 找不到關閉影片按鈕'])
-                time.sleep(180)
+                time.sleep(10)
                 need_break = True
         return need_break
 

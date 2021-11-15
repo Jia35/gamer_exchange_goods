@@ -1,5 +1,7 @@
 # 自動觀看「巴哈姆特 勇者福利社」的廣告並參加商品抽獎
 
+> 已停止維護，改至 [gamer_fuli_exchange](https://github.com/Jia35/gamer_fuli_exchange) 專案。
+
 巴哈姆特的「[勇者福利社](https://fuli.gamer.com.tw/)」可以參加抽將、競標、任務，而參加抽獎(也稱為抽抽樂)除了使用巴幣，也可以使用看廣告的方式兌換抽獎資格。
 
 本專案將看廣告參加抽獎的這一過程自動化，節省自行手動點擊的麻煩。
@@ -11,9 +13,9 @@
 
 此專案會使用到以下 Python 套件，請先安裝：
 
+* [requests](https://pypi.org/project/requests/)
 * [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
 * [selenium](https://pypi.org/project/selenium/)
-* [requests](https://pypi.org/project/requests/)
 
 Selenium 需使用 chromedriver.exe 驅動程式操作 Chrome 連覽器，chromedriver.exe 要跟電腦安裝的 Chrome 相同版本，前往此處下載 [Chrome 驅動](https://chromedriver.chromium.org/downloads)，將其下載檔案解壓縮後覆蓋掉源專案內同檔名檔案。
 
